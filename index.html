@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xochique Store</title>
+
+  <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">XOCHIQUE</div>
+
+  <div class="logos">
+    <img src="img/tec1.png">
+    <img src="img/tec2.png">
+  </div>
+</header>
+
+
+<!-- HERO (NUEVO ESTILO) -->
+<section class="hero">
+  <img src="img/hero.jpeg" class="hero-bg">
+
+  <div class="hero-overlay">
+    <h1>FLORECE TU ESTILO</h1>
+    <p>Diseño contemporáneo con esencia mexicana</p>
+    <button class="btn-main">Explorar colección</button>
+  </div>
+</section>
+
+
+<!-- PRODUCTOS -->
+<section class="productos">
+  <h2>Colección destacada</h2>
+  <div class="grid-productos" id="productos"></div>
+</section>
+
+
+<!-- HISTORIA -->
+<section class="historia">
+  <div class="texto">
+    <h2>Nuestra historia</h2>
+    <p>
+      XOCHIQUE nace de la inspiración en la cultura mexicana,
+      mezclando tradición con diseño moderno.
+    </p>
+  </div>
+
+  <img src="img/historia.jpg">
+</section>
+
+
+<!-- CARRITO -->
+<section class="carrito">
+  <h2>Carrito de compras</h2>
+
+  <ul id="carrito"></ul>
+
+  <h3>Total: $<span id="total">0.00</span></h3>
+
+  <button class="btn-main" onclick="vaciarCarrito()">Vaciar carrito</button>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>@ Daniela Arenas Morales - Instituto Tecnológico de México Campus Pachuca</p>
+</footer>
+
+
+<script>
+
+// PRODUCTOS
+const productos = [
+  { id: 1, nombre: "Vestido Xochi", precio: 1200, imagen: "img/vestido.jpg" },
+  { id: 2, nombre: "Vestido Xochimilco", precio: 1400, imagen: "img/vestido2.jpg" },
+  { id: 3, nombre: "Vestido Tlalojtli", precio: 1600, imagen: "img/vestido3.jpg" },
+  { id: 4, nombre: "Blusa artesanal", precio: 900, imagen: "img/blusa.jpg" },
+  { id: 5, nombre: "Accesorios", precio: 500, imagen: "img/accesorios.jpg" }
+];
+
+let carrito = [];
+
+// MOSTRAR PRODUCTOS
+function mostrarProductos() {
+  const contenedor = document.getElementById("productos");
+
+  productos.forEach(p => {
+    contenedor.innerHTML += `
+      <div class="card">
+        <img src="${p.imagen}">
+        <div class="info">
+          <h4>${p.nombre}</h4>
+          <p>$${p.precio}</p>
+
+          <input type="number" id="cantidad-${p.id}" value="1" min="1">
+
+          <button onclick="agregarCarrito(${p.id})">Agregar</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// AGREGAR
+function agregarCarrito(id) {
+  const producto = productos.find(p => p.id === id);
+  const cantidad = parseInt(document.getElementById(`cantidad-${id}`).value);
+
+  if (cantidad <= 0 || isNaN(cantidad)) return;
+
+  const existe = carrito.find(item => item.id === id);
+
+  if (existe) {
+    existe.cantidad += cantidad;
+  } else {
+    carrito.push({ ...producto, cantidad });
+  }
+
+  mostrarCarrito();
+}
+
+// MOSTRAR CARRITO
+function mostrarCarrito() {
+  const lista = document.getElementById("carrito");
+  const totalHTML = document.getElementById("total");
+
+  lista.innerHTML = "";
+  let total = 0;
+
+  carrito.forEach(item => {
+    const subtotal = item.precio * item.cantidad;
+    total += subtotal;
+
+    lista.innerHTML += `
+      <li>
+        <div>
+          <strong>${item.nombre}</strong><br>
+          x${item.cantidad}
+        </div>
+
+        <div>
+          $${subtotal}
+          <button onclick="eliminarProducto(${item.id})">✕</button>
+        </div>
+      </li>
+    `;
+  });
+
+  totalHTML.innerText = total.toFixed(2);
+}
+
+// ELIMINAR
+function eliminarProducto(id) {
+  carrito = carrito.filter(item => item.id !== id);
+  mostrarCarrito();
+}
+
+// VACIAR
+function vaciarCarrito() {
+  carrito = [];
+  mostrarCarrito();
+}
+
+mostrarProductos();
+
+</script>
+
+</body>
+</html>
